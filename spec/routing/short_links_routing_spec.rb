@@ -12,5 +12,10 @@ RSpec.describe ShortLinksController, type: :routing do
       short_link = "4HPQ7ikE1"
       expect(get: "/#{short_link}").to route_to("short_links#redirect", short_link: short_link)
     end
+
+    it "routes to #analytics" do
+      short_link = "4HPQ7ikE1"
+      expect(get: "/#{short_link}+").to route_to("short_links#analytics", short_link: "#{short_link}+")
+    end
   end
 end

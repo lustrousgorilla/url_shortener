@@ -4,16 +4,18 @@
 #
 # Table name: short_links
 #
-#  id         :bigint(8)        not null, primary key
-#  long_url   :string           not null
-#  short_url  :string           not null
-#  user_id    :bigint(8)        not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  long_url     :string           not null
+#  short_url    :string           not null
+#  user_id      :bigint(8)        not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  visits_count :integer          default(0), not null
 #
 
-
 class ShortLink < ApplicationRecord
+  has_many :visits
+
   before_validation :normalize_url, if: :long_url?
   before_validation :generate_short_url, on: :create
 

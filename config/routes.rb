@@ -2,5 +2,6 @@
 
 Rails.application.routes.draw do
   post "short_link", to: "short_links#create"
+  get ":short_link", to: "short_links#analytics", constraints: { short_link: /.+\+/ }
   get ":short_link", to: "short_links#redirect"
 end

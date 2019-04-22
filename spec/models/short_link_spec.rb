@@ -4,14 +4,14 @@
 #
 # Table name: short_links
 #
-#  id         :bigint(8)        not null, primary key
-#  long_url   :string           not null
-#  short_url  :string           not null
-#  user_id    :bigint(8)        not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  long_url     :string           not null
+#  short_url    :string           not null
+#  user_id      :bigint(8)        not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  visits_count :integer          default(0), not null
 #
-
 
 require "rails_helper"
 
@@ -27,6 +27,7 @@ RSpec.describe ShortLink, type: :model do
       it { should have_db_column(:long_url).of_type(:string).with_options(null: false) }
       it { should have_db_column(:short_url).of_type(:string).with_options(null: false) }
       it { should have_db_column(:user_id).of_type(:integer).with_options(null: false) }
+      it { should have_db_column(:visits_count).of_type(:integer).with_options(default: 0, null: false) }
     end
 
     context "indices" do
@@ -35,7 +36,17 @@ RSpec.describe ShortLink, type: :model do
     end
   end
 
-  context "associations"
+  context "associations" do
+    it { should have_many(:visits) }
+
+    it "visits_count increments upon creation of associated visits" do
+      short_link = create(:short_link)
+      expect(short_link.visits_count).to eq(0)
+      count = 3
+      create_list(:visit, count, short_link: short_link)
+      expect(short_link.reload.visits_count).to eq(count)
+    end
+  end
 
   context "validations" do
     subject { create(:short_link) }
