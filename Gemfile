@@ -8,6 +8,7 @@ gem "rails", "~> 5.2.3"
 
 # DB
 gem "pg"
+gem "validate_url"
 
 # Server
 gem "puma", "~> 3.11"

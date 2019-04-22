@@ -57,6 +57,12 @@ RSpec.describe ShortLink, type: :model do
 
   context "callbacks" do
     describe "#normalize_url" do
+      it "appends protocol if missing" do
+        short_link.long_url = "google.com"
+        short_link.save
+        expect(short_link.long_url).to eq("http://google.com")
+      end
+
       it "downcases provided long_url" do
         short_link.long_url = "http://GOOgle.CoM"
         short_link.save

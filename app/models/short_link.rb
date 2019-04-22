@@ -19,9 +19,9 @@ class ShortLink < ApplicationRecord
   before_validation :normalize_url, if: :long_url?
   before_validation :generate_short_url, on: :create
 
-  validates_presence_of :long_url, :short_url, :user_id
-  validates_uniqueness_of :short_url, case_sensitive: false
-  validates_uniqueness_of :long_url, scope: :user_id, case_sensitive: false
+  validates_presence_of :user_id, :short_url
+  validates :long_url, presence: true, uniqueness: { scope: :user_id, case_sensitive: false },
+            url: { public_suffix: true }
 
   def as_json(*)
     { "long_url" => long_url, "short_link" => short_url }
@@ -30,7 +30,10 @@ class ShortLink < ApplicationRecord
   private
 
     def normalize_url
-      self.long_url = long_url.downcase if long_url_changed?
+      if long_url_changed?
+        self.long_url = "http://" + long_url unless URI.parse(long_url).scheme.present?
+        self.long_url = long_url.downcase
+      end
     end
 
     def generate_short_url

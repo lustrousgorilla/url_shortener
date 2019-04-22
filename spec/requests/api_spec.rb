@@ -12,7 +12,7 @@ RSpec.describe "API", type: :request do
     let(:long_url) { Faker::Internet.unique.url }
     let(:user_id) { 1 }
 
-    describe "with new long_url" do
+    describe "with new long_url (full)" do
       it "creates a short link" do
         expect { api_request }.to change { ShortLink.count }.by(1)
       end
@@ -23,6 +23,23 @@ RSpec.describe "API", type: :request do
         short_link = ShortLink.last
         expect(short_link.long_url).to eq(long_url)
         expect_json(long_url: long_url, short_link: short_link.short_url)
+      end
+    end
+
+    describe "with new long_url (partial)" do
+      let(:long_url) { Faker::Internet.unique.url.gsub("http://", "") }
+
+      it "creates a short link" do
+        expect { api_request }.to change { ShortLink.count }.by(1)
+      end
+
+      it "responds with the new short link" do
+        api_request
+        expect_status(:created)
+        short_link = ShortLink.last
+        normalized_long_url = "http://" + long_url
+        expect(short_link.long_url).to eq(normalized_long_url)
+        expect_json(long_url: normalized_long_url, short_link: short_link.short_url)
       end
     end
 
@@ -58,13 +75,23 @@ RSpec.describe "API", type: :request do
       end
     end
 
-    describe "with invalid params" do
+    describe "with blank user_id" do
       let(:user_id) { nil }
 
-      it "responds with errors" do
+      it "responds with error" do
         api_request
         expect_status(:unprocessable_entity)
         expect_json(status: 422, errors: { user_id: ["can't be blank"] })
+      end
+    end
+
+    describe "with invalid URL" do
+      let(:long_url) { "notavalidurl" }
+
+      it "responds with error" do
+        api_request
+        expect_status(:unprocessable_entity)
+        expect_json(status: 422, errors: { long_url: ["is not a valid URL"] })
       end
     end
   end
