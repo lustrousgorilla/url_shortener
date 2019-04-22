@@ -21,7 +21,7 @@ class ShortLink < ApplicationRecord
 
   validates_presence_of :user_id, :short_url
   validates :long_url, presence: true, uniqueness: { scope: :user_id, case_sensitive: false },
-            url: { public_suffix: true }
+                       url: { public_suffix: true }
 
   def as_json(*)
     { "long_url" => long_url, "short_link" => short_url }

@@ -14,9 +14,12 @@
 *From the project root directory:*
 - Run test suite: `rspec`
 - Run development server on port 3000: `rails s -p 3000`
-- Send an API request to create a short link: `curl -H "Content-Type: application/json" -X POST -d '{"long_url": "zombo.com", "user_id": 1}' http://localhost:3000/short_link`
+- Send an API request to create a short link:  
+```
+curl -H "Content-Type: application/json" -X POST -d '{"long_url": "zombo.com", "user_id": 1}' http://localhost:3000/short_link
+```
 - Visit the short link returned by the API in your browser and be redirected to zombo.com.
-- View short link analytics: `curl -H "Content-Type: application/json" http://localhost:3000/{{short_link}}`
+- View short link analytics: `curl http://localhost:3000/{{short_link}}+`
 
 ## Production 
 For low-hassle production deployment, pick one and follow its instructions:
